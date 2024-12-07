@@ -1,18 +1,16 @@
-class SchoolChild {
-    constructor(surname, name, patronymic, gender, nationality, height, weight, dateBirth, phone, address, school, classroom) {
-        this.surname = surname
-        this.name = name
-        this.patronymic = patronymic
-        this.gender = gender
-        this.nationality = nationality
-        this.height = height
-        this.weight = weight
-        this.dateBirth = dateBirth
-        this.phone = phone
-        this.address = address
-        this.school = school
-        this.classroom = classroom
-    }
+function SchoolChild(surname, name, patronymic, gender, nationality, height, weight, dateBirth, phone, address, school, classroom) {
+    this.surname = surname
+    this.name = name
+    this.patronymic = patronymic
+    this.gender = gender
+    this.nationality = nationality
+    this.height = height
+    this.weight = weight
+    this.dateBirth = dateBirth
+    this.phone = phone
+    this.address = address
+    this.school = school
+    this.classroom = classroom
 }
 
 function formingArray() { // собирает данные о школьниках
@@ -76,11 +74,29 @@ function findSchoolChild(schoolKids, property, value) { // поиск школь
     }
 }
 
-function sortSchoolChild(schoolKids, properties) { // сортировка
+function sortSchoolChild(schoolKids, properties) {// сортировка
+    const errorProps = properties.filter(prop => !schoolKids.every(child => prop in child))
+    if (errorProps.length > 0) {
+        console.error(`Ошибка, таких свойств нет в объекте: ${errorProps.join(", ")}`)
+        return
+    }
     schoolKids.sort((a, b) => { // метод упорядочивает
         for (let prop of properties) {
-            if (a[prop] > b[prop]) return 1
-            if (a[prop] < b[prop]) return -1
+            const A = a[prop]
+            const B = b[prop]
+            if (typeof A !== typeof B) {
+                console.error(`Ошибка типов: "${prop}" имеет разные типы данных "${A}" (${typeof A}) и "${B}" (${typeof B})`);
+                return 0;
+            }
+            if (typeof A === "string" && typeof B === "string") {
+                const result = A.localeCompare(B);
+                if (result !== 0) return result;
+            } else if (typeof A === "number" && typeof B === "number") {
+                if (A > B) return 1;
+                if (A < B) return -1;
+            } else {
+                console.warn(`Эти типы не подходят друг для друга "${prop}": ${typeof A}, ${typeof B}`);
+            }
         }
         return 0
     })
